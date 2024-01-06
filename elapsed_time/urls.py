@@ -22,6 +22,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     
+    path('question-tracking/',include("apps.question_tracking.urls")),
+    # path('time-tracking/',include("apps.time_tracking.urls")),
 ]
 
 
