@@ -2,7 +2,7 @@ from django.db import models
 
 
 class BaseModel(models.Model):
-    crelated_date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    created_date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_modified_date = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
