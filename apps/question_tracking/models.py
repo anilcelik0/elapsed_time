@@ -40,6 +40,14 @@ class QuestionMainTopic(BaseModel):
             return self.target
         else:
             return 0
+        
+    @property
+    def complated_percent(self):
+        return int(self.complated*100/self.total)
+    
+    @property
+    def name(self):
+        return self.main_topic.name
     
     def save(self, *args, **kwargs):
         self.color = random_rgb()
@@ -50,6 +58,7 @@ class QuestionSubTopic(BaseModel):
     main_topic = models.ForeignKey(QuestionMainTopic, on_delete=models.CASCADE, related_name="question_main")
     sub_topic = models.ForeignKey(SubTopic, null=True, blank=True, on_delete=models.CASCADE, related_name="question_sub")
     color = models.CharField(max_length=20, null=True, blank=True)
+    
     @property
     def complated(self):
         count = 0
