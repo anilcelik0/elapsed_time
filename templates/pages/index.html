@@ -189,10 +189,10 @@
       document.getElementById('doughnutChart'),{
         type: 'doughnut',
         data: {
-          labels: [{% for obj in progress %} {{obj.name}}. {% endfor %} ],
+          labels: [{% for obj in progress %} '{{obj.name}}', {% endfor %} ],
           datasets: [{
-            data: [{% for obj in progress %} {{obj.complated}}. {% endfor %}],
-            backgroundColor: [{% for color in colors %} {{color}}. {% endfor %}],
+            data: [{% for obj in progress %} {{obj.complated}}, {% endfor %}],
+            backgroundColor: [{% for obj in progress %} '{{obj.color}}', {% endfor %}],
             hoverOffset: 4
           }]
         }
@@ -209,7 +209,7 @@
     new Chart(ctx1, {
       type: "line",
       data: {
-        labels: [{% for obj in report %} {{obj.created_date|date:"M d" }}. {% endfor %}],
+        labels: [{% for obj in report %} '{{obj.created_date|date:"M d" }}', {% endfor %}],
         datasets: [{
           label: "Mobile apps",
           tension: 0.4,
@@ -219,7 +219,7 @@
           backgroundColor: gradientStroke1,
           borderWidth: 3,
           fill: true,
-          data: [{% for obj in report %} {{obj.complated }}. {% endfor %}],
+          data: [{% for obj in report %} {{obj.complated }}, {% endfor %}],
           maxBarThickness: 6
 
         }],
