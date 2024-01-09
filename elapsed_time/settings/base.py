@@ -39,9 +39,9 @@ INSTALLED_APPS = [
     
     # Our Apps
     'apps.apps.AppsConfig',
+    'apps.dashboard.apps.DashboardConfig'
     'apps.question_tracking.apps.QuestionTrackingConfig',
-    # 'apps.time_tracking.apps.TimeTrackingConfig',
-    
+  
     # 3rd party apps
 ]
 

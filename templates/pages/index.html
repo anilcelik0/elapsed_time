@@ -1,0 +1,284 @@
+{% load static %}
+{% include "pages/base.html" %}
+{% include "partials/_sidenav.html" %}
+
+{% block content %}
+  <main class="main-content position-relative border-radius-lg ">
+    {% include "partials/_navbar.html" %}
+    <div class="container-fluid py-4">
+      <div class="row">
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card" style="height: 100%;">
+            <div class="card-body p-3">
+              <div class="row">
+                <div class="col-8">
+                  <div class="numbers">
+                    <p class="text-sm mb-0 text-uppercase font-weight-bold">Günlük</p>
+                    <h5 class="font-weight-bolder">
+                      {{daily}}
+                    </h5>
+                    <p class="mb-0">
+                      Günlük ortalama {{daily_avg}}
+                    </p>
+                  </div>
+                </div>
+                <div class="col-4 text-end">
+                    <p class="mb-0">
+                      <span class="text-success text-sm font-weight-bolder">{{daily_persent}}%</span>
+                    </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card"  style="height: 100%;"f>
+            <div class="card-body p-3">
+              <div class="row">
+                <div class="col-8">
+                  <div class="numbers">
+                    <p class="text-sm mb-0 text-uppercase font-weight-bold">Haftalık</p>
+                    <h5 class="font-weight-bolder">
+                      {{weekly}}
+                    </h5>
+                    <p class="mb-0">
+                      Haftalık ortalama {{weekly_avg}}
+                    </p>
+                  </div>
+                </div>
+                <div class="col-4 text-end">
+                  <span class="text-success text-sm font-weight-bolder">{{weekly_persent}}%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card" style="height: 100%;">
+            <div class="card-body p-3">
+              <div class="row">
+                <div class="col-8">
+                  <div class="numbers">
+                    <p class="text-sm mb-0 text-uppercase font-weight-bold">Aylık</p>
+                    <h5 class="font-weight-bolder">
+                      {{monthly}}
+                    </h5>
+                    <p class="mb-0">
+                      Aylık ortalama {{monthly_avg}}
+                    </p>
+                  </div>
+                </div>
+                <div class="col-4 text-end">
+                  <span class="text-danger text-sm font-weight-bolder">{{monthly_persent}}%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="card" style="height: 100%;">
+            <div class="card-body p-3">
+              <div class="row">
+                <div class="col-8">
+                  <div class="numbers">
+                    <p class="text-sm mb-0 text-uppercase font-weight-bold">Toplam</p>
+                    <h5 class="font-weight-bolder">
+                      {{total}}
+                    </h5>
+                    <p class="mb-0"> Kalan {{total_left}}
+                    </p>
+                  </div>
+                </div>
+                <div class="col-4 text-end">
+                  <span class="text-success text-sm font-weight-bolder">{{total_persent}}%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col mb-lg-0 mb-4">
+          <div class="card z-index-2 h-100">
+            <div class="card-header pb-0 pt-3 bg-transparent">
+              Grafik
+            </div>
+            <div class="card-body p-3">
+              <div class="chart">
+                <canvas id="chart-line" class="chart-canvas" height="300"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-lg-7 mb-lg-0 mb-4">
+          <div class="card" style="height: 100%;">
+            <div class="card-header pb-0">
+              <h6>İlerleyiş</h6>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center justify-content-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">İsim</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Tamamlanan</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Hedeflenen</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7 ps-2">İlerleme</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for obj in progress %}
+                    <tr>
+                      <td>
+                        <div class="d-flex px-2">
+                          <div class="my-auto">
+                            <h6 class="mb-0 text-sm">{{obj.name}}</h6>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <p class="text-sm font-weight-bold mb-0">{{obj.complated}}</p>
+                      </td>
+                      <td>
+                        <span class="text-xs font-weight-bold">{{obj.total}}</span>
+                      </td>
+                      <td class="align-middle text-center">
+                        <div class="d-flex align-items-center justify-content-center">
+                          <span class="me-2 text-xs font-weight-bold">{{obj.complated_percent}}%</span>
+                          <div>
+                            <div class="progress">
+                              <div class="progress-bar bg-gradient-success" role="progressbar" aria-valuenow="{{obj.complated_percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{obj.complated_percent}}%;"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="align-middle">
+                        <button class="btn btn-link text-secondary mb-0">
+                          <i class="fa fa-ellipsis-v text-xs"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="card" style="height: 100%;">
+            <div class="card-header pb-0 p-3">
+              <h6 class="mb-0">Categories</h6>
+            </div>
+            <div class="card-body p-3">
+              <canvas id="doughnutChart" style="height:150px"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  {% endblock %}
+  <!--   Core JS Files   -->
+  <script>
+
+    new Chart(
+      document.getElementById('doughnutChart'),{
+        type: 'doughnut',
+        data: {
+          labels: [{% for obj in progress %} {{obj.name}}. {% endfor %} ],
+          datasets: [{
+            data: [{% for obj in progress %} {{obj.complated}}. {% endfor %}],
+            backgroundColor: [{% for color in colors %} {{color}}. {% endfor %}],
+            hoverOffset: 4
+          }]
+        }
+      })
+  </script>
+  <script>
+    var ctx1 = document.getElementById("chart-line").getContext("2d");
+
+    var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
+
+    gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
+    gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
+    gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
+    new Chart(ctx1, {
+      type: "line",
+      data: {
+        labels: [{% for obj in report %} {{obj.created_date|date:"M d" }}. {% endfor %}],
+        datasets: [{
+          label: "Mobile apps",
+          tension: 0.4,
+          borderWidth: 0,
+          pointRadius: 0,
+          borderColor: "#5e72e4",
+          backgroundColor: gradientStroke1,
+          borderWidth: 3,
+          fill: true,
+          data: [{% for obj in report %} {{obj.complated }}. {% endfor %}],
+          maxBarThickness: 6
+
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false,
+          }
+        },
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        scales: {
+          y: {
+            grid: {
+              drawBorder: false,
+              display: true,
+              drawOnChartArea: true,
+              drawTicks: false,
+              borderDash: [5, 5]
+            },
+            ticks: {
+              display: true,
+              padding: 10,
+              color: '#fbfbfb',
+              font: {
+                size: 11,
+                family: "Open Sans",
+                style: 'normal',
+                lineHeight: 2
+              },
+            }
+          },
+          x: {
+            grid: {
+              drawBorder: false,
+              display: false,
+              drawOnChartArea: false,
+              drawTicks: false,
+              borderDash: [5, 5]
+            },
+            ticks: {
+              display: true,
+              color: '#ccc',
+              padding: 20,
+              font: {
+                size: 11,
+                family: "Open Sans",
+                style: 'normal',
+                lineHeight: 2
+              },
+            }
+          },
+        },
+      },
+    });
+  </script>
+
