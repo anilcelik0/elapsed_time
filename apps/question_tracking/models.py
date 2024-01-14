@@ -43,7 +43,10 @@ class QuestionMainTopic(BaseModel):
         
     @property
     def complated_percent(self):
-        return int(self.complated*100/self.total)
+        try:
+            return int(self.complated*100/self.total)
+        except:
+            return 0
     
     @property
     def name(self):
@@ -52,6 +55,9 @@ class QuestionMainTopic(BaseModel):
     def save(self, *args, **kwargs):
         self.color = random_rgb()
         return super().save(*args, **kwargs)
+    
+    def __str__(self) -> str:
+        return self.name
 
 
 class QuestionSubTopic(BaseModel):
@@ -71,9 +77,29 @@ class QuestionSubTopic(BaseModel):
         except:
             return count
     
+    @property
+    def name(self):
+        if self.sub_topic:
+            return self.sub_topic.name
+        else:
+            return self.main_topic.name
+    
+    @property
+    def complated_percent(self):
+        try:
+            return int(self.complated*100/self.main_topic.total)
+        except:
+            return 0
+        
     def save(self, *args, **kwargs):
         self.color = random_rgb()
         return super().save(*args, **kwargs)
+    
+    def __str__(self) -> str:
+        if self.sub_topic:
+            return self.sub_topic.name
+        else:
+            return self.main_topic.name
 
 
 class QuestionRecord(BaseModel):
@@ -81,4 +107,7 @@ class QuestionRecord(BaseModel):
     question_count = models.IntegerField(null=True, blank=True)
     correct_answer = models.IntegerField(null=True, blank=True)
     wrong_answer = models.IntegerField(null=True, blank=True)
+    
+    def __str__(self) -> str:
+        return self.topic.__str__()
     
