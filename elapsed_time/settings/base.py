@@ -98,6 +98,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LOCALE_PATHS = [BASE_DIR / 'locale']
 
+AUTHENTICATION_BACKENDS = (
+    'authentication.management.commands.email_backend.EmailOrUsernameModelBackend',
+)
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -109,6 +113,9 @@ USE_I18N = True
 
 USE_TZ = True
 
+LOGIN_URL = "authentication:login"
+LOGIN_REDIRECT_URL = ""  # Route defined in home/urls.py
+LOGOUT_REDIRECT_URL = "authentication:login"  # Route defined in home/urls.py
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
