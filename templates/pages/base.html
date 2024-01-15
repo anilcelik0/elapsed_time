@@ -33,8 +33,17 @@
   <!-- CSS Files -->
   <link id="pagestyle" href="{% static "css/argon-dashboard.css"%}" rel="stylesheet" />
 </head>
-
-<body class="g-sidenav-show   bg-gray-100">
+<style>
+  
+.sidebar li .submenu{ 
+	list-style: none; 
+	margin: 0; 
+	padding: 0; 
+	padding-left: 1rem; 
+	padding-right: 1rem;
+}
+</style>
+<body class="g-sidenav-show dark-version bg-gray-100">
     
     {% block content %}{% endblock %}
 </body>

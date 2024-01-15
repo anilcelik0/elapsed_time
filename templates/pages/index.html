@@ -18,13 +18,13 @@
                       {{daily}}
                     </h5>
                     <p class="mb-0">
-                      Günlük ortalama {{daily_avg}}
+                      Önceki Gün {{daily_avg}}
                     </p>
                   </div>
                 </div>
                 <div class="col-4 text-end">
                     <p class="mb-0">
-                      <span class="text-success text-sm font-weight-bolder">{{daily_persent}}%</span>
+                      <span class="{% if daily_persent >= 0 %}text-success{% else %}text-danger{% endif %} text-sm font-weight-bolder">{{daily_persent}}%</span>
                     </p>
                 </div>
               </div>
@@ -42,12 +42,12 @@
                       {{weekly}}
                     </h5>
                     <p class="mb-0">
-                      Haftalık ortalama {{weekly_avg}}
+                      Önceki Hafta {{weekly_avg}}
                     </p>
                   </div>
                 </div>
                 <div class="col-4 text-end">
-                  <span class="text-success text-sm font-weight-bolder">{{weekly_persent}}%</span>
+                  <span class="{% if weekly_persent >= 0 %}text-success{% else %}text-danger{% endif %} text-sm font-weight-bolder">{{weekly_persent}}%</span>
                 </div>
               </div>
             </div>
@@ -64,12 +64,12 @@
                       {{monthly}}
                     </h5>
                     <p class="mb-0">
-                      Aylık ortalama {{monthly_avg}}
+                      Önceki Ay {{monthly_avg}}
                     </p>
                   </div>
                 </div>
                 <div class="col-4 text-end">
-                  <span class="text-danger text-sm font-weight-bolder">{{monthly_persent}}%</span>
+                  <span class="{% if monthly_persent >= 0 %}text-success{% else %}text-danger{% endif %} text-sm font-weight-bolder">{{monthly_persent}}%</span>
                 </div>
               </div>
             </div>
@@ -101,7 +101,7 @@
         <div class="col mb-lg-0 mb-4">
           <div class="card z-index-2 h-100">
             <div class="card-header pb-0 pt-3 bg-transparent">
-              Grafik
+              {{label_name}}
             </div>
             <div class="card-body p-3">
               <div class="chart">
@@ -211,7 +211,7 @@
       data: {
         labels: [{% for obj in report %} '{{obj.created_date|date:"M d" }}', {% endfor %}],
         datasets: [{
-          label: "Mobile apps",
+          label: "{{label_name}}",
           tension: 0.4,
           borderWidth: 0,
           pointRadius: 0,

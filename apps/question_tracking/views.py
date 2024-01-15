@@ -94,8 +94,10 @@ def index(request):
     
 
     context = {
+        "sidebar_topic":progress,
         "progress":progress,
         "report":report,
+        "label_name": "Tüm Dersler",
         
         # infobox
         "daily":daily,
@@ -120,6 +122,7 @@ def index(request):
 
 @login_required
 def sub_index(request, pk):
+    sidebar_topic = QuestionMainTopic.objects.filter(user=request.user)
     progress = QuestionMainTopic.objects.filter(user=request.user, id=pk)
     report = []
     
@@ -204,8 +207,10 @@ def sub_index(request, pk):
     
 
     context = {
+        "sidebar_topic":sidebar_topic,
         "progress":progress.first().question_main.all(),
         "report":report,
+        "label_name": progress.first().name,
         
         # infobox
         "daily":daily,
