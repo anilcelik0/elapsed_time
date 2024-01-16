@@ -4,8 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('login', AuthSigninView.as_view(template_name = 'pages/auth/signin.html'), name='signin'),
+    path("profile", UserProfileView.as_view(), name="profile"),
+    path('login', AuthSigninView.as_view(), name='login'),
     path('logout/', logout_view, name='logout'),
-    path('signup', AuthSignupView.as_view(template_name = 'pages/auth/signup.html'), name='signup'),
+    path('signup', AuthSignupView.as_view(), name='signup'),
 ]
 

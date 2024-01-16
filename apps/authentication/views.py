@@ -10,83 +10,30 @@ from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
 
-class UserProfileView(TemplateView):
+class UserProfileView(FormView):
     template_name = 'pages/profile.html'
-    # form_class = UserProfileForm
+    form_class = UserUpdateForm
     # success_url = reverse_lazy('auth:profile')
-
-
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super().get_context_data(**kwargs)
-
-        user_update_form = UserUpdateForm
-        change_password_form = MyPasswordChangeForm
-        # Define the layout for this module
-        # _templates/layout/auth.html
-        context.update({
-            'user_update_form': user_update_form,
-            'change_password_form':change_password_form
-        })
-
-        return context
-
-    
-    def post(self,request,*args,**kwargs):
-        if request.method == 'POST':
-            user = request.user
-            user_object = User.objects.get(id=user.id)
-            
-            user_update_form  = UserUpdateForm(request.POST)
-            change_password_form = MyPasswordChangeForm(request.POST)
-
-            user_updatet_valid = user_update_form.is_valid()
-            change_password_valid = change_password_form.is_valid()
-            
-            if "user_update" in request.POST:
-                user_object.username = user_update_form["username"].value()
-                user_object.email = user_update_form["email"].value()
-                user_object.first_name = user_update_form["first_name"].value()
-                user_object.last_name = user_update_form["last_name"].value()
-                user_object.save()
-                messages.add_message(request, messages.SUCCESS, 'user successfuly updated')
-                
-            elif "change_password" in request.POST:
-                currentpassword = request.user.password
-
-                old_password = change_password_form["old_password"].value()
-                password1 = change_password_form["new_password1"].value()
-                password2 = change_password_form["new_password2"].value()
-
-                matchcheck= check_password(old_password, currentpassword)
-
-                if matchcheck:
-                    if password1 == password2:
-                        user_object.set_password(password1)
-                        user_object.save()
-                        messages.add_message(request, messages.SUCCESS, 'password successfuly changed')
-                    
-                    else:
-                        messages.add_message(request, messages.ERROR, 'passwords not match')
-                        
-                else:
-                    messages.add_message(request, messages.ERROR, 'incorrect passwords ')
-
-        return render(request, self.template_name, self.get_context_data())
-    
+  
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
     def get_initial(self):
         initial = super().get_initial()
 
-        initial['bio'] = self.request.user.username
+        initial['username'] = self.request.user.username
+        initial['email'] = self.request.user.email
+        initial['first_name'] = self.request.user.first_name
+        initial['last_name'] = self.request.user.last_name
 
         return initial
 
 
 class AuthSignupView(FormView):
-    template_name = 'pages/signup.html'
+    template_name = 'pages/sign-up.html'
     form_class = SignUpForm
-    success_url = reverse_lazy('authentication:login')
+    success_url = reverse_lazy('login')
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -99,9 +46,9 @@ class AuthSignupView(FormView):
         return super().form_valid(form)
 
 class AuthSigninView(FormView):
-    template_name = 'pages/signin.html'
+    template_name = 'pages/sign-in.html'
     form_class = LoginForm
-    success_url = ""
+    success_url = reverse_lazy("main_topic")
 
 
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
@@ -115,9 +62,9 @@ class AuthSigninView(FormView):
         else:
             # return HttpResponseRedirect(reverse_lazy('auth:signin'))
             messages.add_message(request, messages.ERROR, "Login Failed")
-            return HttpResponseRedirect(reverse_lazy('authentication:login'))
+            return HttpResponseRedirect(reverse_lazy('login'))
 
         
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse_lazy('authentication:login'))
+    return HttpResponseRedirect(reverse_lazy('login'))
