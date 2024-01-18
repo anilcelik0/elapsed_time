@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.contrib.auth.hashers import check_password
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.contrib import messages
@@ -9,6 +9,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
+
+def index(request):
+    return redirect("main_topic")
 
 class UserProfileView(FormView):
     template_name = 'pages/profile.html'
