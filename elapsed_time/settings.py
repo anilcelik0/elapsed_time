@@ -52,6 +52,7 @@ INSTALLED_APPS = [
   
     'apps.authentication.apps.AuthenticationConfig',
     'apps.question_tracking.apps.QuestionTrackingConfig',
+    'apps.time_tracking.apps.TimeTrackingConfig',
     # 3rd party apps
 ]
 

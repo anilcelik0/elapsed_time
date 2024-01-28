@@ -24,6 +24,7 @@ urlpatterns = [
     
     path('',include("apps.authentication.urls")),
     path('question-tracking/',include("apps.question_tracking.urls")),
+    path('time-tracking/',include("apps.time_tracking.urls")),
 ]
 
 
