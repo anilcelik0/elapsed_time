@@ -107,6 +107,7 @@ class QuestionRecord(BaseModel):
     question_count = models.IntegerField(null=True, blank=True)
     correct_answer = models.IntegerField(null=True, blank=True)
     wrong_answer = models.IntegerField(null=True, blank=True)
+    date = models.DateField(null=True, blank=True)
     
     def __str__(self) -> str:
         return self.topic.__str__()

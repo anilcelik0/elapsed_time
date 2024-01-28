@@ -50,3 +50,32 @@
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="{% static "js/argon-dashboard.min.js"%}"></script>
+  <script src="{% static "js/jquery-3.7.1.min.js"%}"></script>
+  <script>
+    $( document ).ready(function() {
+      document.getElementById("main_topic").addEventListener("change", function(){
+        document.getElementById("sub_topic").innerHTML = "",
+        $.ajax({
+          type: "GET",
+          url: "{% url 'get_sub_topic' %}",
+          data:{
+            "main_topic_id": $("#main_topic").val(),
+          },
+          dataType: 'json',
+          success:function(response){
+            console.log(response)
+            var select = document.getElementById("sub_topic");
+            for(var i=0; i<response.sub_topics.length; i++)
+            {
+              console.log("in for")
+              var option = document.createElement("option");
+              option.value = response.sub_topics[i]["0"]
+              option.innerHTML = response.sub_topics[i]["1"]
+              select.appendChild(option)
+              console.log(option)
+            }
+          },
+        });
+      });
+    });
+  </script>

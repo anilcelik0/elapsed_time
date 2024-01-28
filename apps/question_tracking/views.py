@@ -1,22 +1,35 @@
 from django.http import HttpResponse
-from django.shortcuts import render
-from .models import QuestionMainTopic, QuestionRecord
+from django.shortcuts import redirect, render
+from .models import QuestionMainTopic, QuestionRecord, QuestionSubTopic
+from .forms import QuestionRecordForm
 import datetime
 from django.utils import timezone 
-from dateutil.relativedelta import relativedelta, SU
+from dateutil.relativedelta import relativedelta, MO
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 
 # Create your views here.
 
 @login_required()
 def index(request):
+    if request.method == "POST":
+        form = QuestionRecordForm(request.POST)
+        topic_id = int(request.POST["sub_topic"])
+        topic = QuestionSubTopic.objects.get(id=topic_id)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.topic = topic
+            obj.save()
+    else:
+        form = QuestionRecordForm
+    
     progress = QuestionMainTopic.objects.filter(user=request.user)
     report = []
     
-    datas = QuestionRecord.objects.filter(topic__main_topic__user=request.user).order_by("created_date")
+    datas = QuestionRecord.objects.filter(topic__main_topic__user=request.user).order_by("date")
     for data in datas:
         if len(report) != 0:
-            if data.created_date.date() == report[-1].created_date.date():
+            if data.date == report[-1].date:
                 report[-1].question_count += data.question_count
             else:
                 report.append(data)
@@ -26,13 +39,13 @@ def index(request):
     # Daily
     today = timezone.now()
     daily = 0
-    daily_objs = datas.filter(created_date__date=today.date())
+    daily_objs = datas.filter(date=today.date())
     for a in daily_objs:
         daily += a.question_count
     
     yesterday = today - datetime.timedelta(days=1)
     before_day = 0
-    before_daily_objs = datas.filter(created_date__date=yesterday.date())
+    before_daily_objs = datas.filter(date=yesterday.date())
     for a in before_daily_objs:
         before_day += a.question_count
     
@@ -42,14 +55,14 @@ def index(request):
         daily_persent = 100
     
     # Weekly
-    this_week = today + relativedelta(weekday=SU(-1))
+    this_week = today + relativedelta(weekday=MO(-1))
     weekly = 0
-    weekly_objs = datas.filter(created_date__range=[this_week, today+relativedelta(weekday=SU(+1))])
+    weekly_objs = datas.filter(created_date__range=[this_week, today+relativedelta(weekday=MO(+1))])
     for a in weekly_objs:
         weekly += a.question_count
     
     before_week = 0
-    before_weekly_objs = datas.filter(created_date__range=[today + relativedelta(weekday=SU(-2)), today + relativedelta(weekday=SU(-1))])
+    before_weekly_objs = datas.filter(created_date__range=[today + relativedelta(weekday=MO(-2)), today + relativedelta(weekday=MO(-1))])
     for a in before_weekly_objs:
         before_week += a.question_count    
     
@@ -60,14 +73,14 @@ def index(request):
     
     
     # Monthly
-    month_objs = datas.filter(created_date__month=today.month)
+    month_objs = datas.filter(date__month=today.month)
     monthly = 0
     for a in month_objs:
         monthly += a.question_count
     
     before_month_value = today - relativedelta(months=1)
     before_month = 0
-    before_monthly_objs = datas.filter(created_date__month=before_month_value.month)
+    before_monthly_objs = datas.filter(date__month=before_month_value.month)
     for a in before_monthly_objs:
         before_month += a.question_count
     
@@ -85,7 +98,7 @@ def index(request):
         total += a.complated
     
     for b in progress:
-        if b.target != 0:
+        if b.target != 0 and type(b.target) == type(0):
             if b.target >= b.complated:
                 total_left += (b.target-b.complated)
     
@@ -94,6 +107,7 @@ def index(request):
     
 
     context = {
+        "form": form,
         "sidebar_topic":progress,
         "progress":progress,
         "report":report,
@@ -122,14 +136,25 @@ def index(request):
 
 @login_required
 def sub_index(request, pk):
+    if request.method == "POST":
+        form = QuestionRecordForm(request.POST)
+        topic_id = int(request.POST["sub_topic"])
+        topic = QuestionSubTopic.objects.get(id=topic_id)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.topic = topic
+            obj.save()
+    else:
+        form = QuestionRecordForm
+
     sidebar_topic = QuestionMainTopic.objects.filter(user=request.user)
     progress = QuestionMainTopic.objects.filter(user=request.user, id=pk)
     report = []
     
-    datas = QuestionRecord.objects.filter(topic__main_topic__id=pk, topic__main_topic__user=request.user).order_by("created_date")
+    datas = QuestionRecord.objects.filter(topic__main_topic__id=pk, topic__main_topic__user=request.user).order_by("date")
     for data in datas:
         if len(report) != 0:
-            if data.created_date.date() == report[-1].created_date.date():
+            if data.date == report[-1].date:
                 report[-1].question_count += data.question_count
             else:
                 report.append(data)
@@ -139,13 +164,13 @@ def sub_index(request, pk):
     # Daily
     today = timezone.now()
     daily = 0
-    daily_objs = datas.filter(created_date__date=today.date())
+    daily_objs = datas.filter(date=today.date())
     for a in daily_objs:
         daily += a.question_count
     
     yesterday = today - datetime.timedelta(days=1)
     before_day = 0
-    before_daily_objs = datas.filter(created_date__date=yesterday.date())
+    before_daily_objs = datas.filter(date=yesterday.date())
     for a in before_daily_objs:
         before_day += a.question_count
     
@@ -155,14 +180,14 @@ def sub_index(request, pk):
         daily_persent = 100
     
     # Weekly
-    this_week = today + relativedelta(weekday=SU(-1))
+    this_week = today + relativedelta(weekday=MO(-1))
     weekly = 0
-    weekly_objs = datas.filter(created_date__range=[this_week, today+relativedelta(weekday=SU(+1))])
+    weekly_objs = datas.filter(date__range=[this_week, today+relativedelta(weekday=MO(+1))])
     for a in weekly_objs:
         weekly += a.question_count
     
     before_week = 0
-    before_weekly_objs = datas.filter(created_date__range=[today + relativedelta(weekday=SU(-2)), today + relativedelta(weekday=SU(-1))])
+    before_weekly_objs = datas.filter(date__range=[today + relativedelta(weekday=MO(-2)), today + relativedelta(weekday=MO(-1))])
     for a in before_weekly_objs:
         before_week += a.question_count    
     
@@ -173,14 +198,14 @@ def sub_index(request, pk):
     
     
     # Monthly
-    month_objs = datas.filter(created_date__month=today.month)
+    month_objs = datas.filter(date__month=today.month)
     monthly = 0
     for a in month_objs:
         monthly += a.question_count
     
     before_month_value = today - relativedelta(months=1)
     before_month = 0
-    before_monthly_objs = datas.filter(created_date__month=before_month_value.month)
+    before_monthly_objs = datas.filter(date__month=before_month_value.month)
     for a in before_monthly_objs:
         before_month += a.question_count
     
@@ -207,6 +232,7 @@ def sub_index(request, pk):
     
 
     context = {
+        "form":form,
         "sidebar_topic":sidebar_topic,
         "progress":progress.first().question_main.all(),
         "report":report,
@@ -231,3 +257,24 @@ def sub_index(request, pk):
         "total_persent":total_persent,
     }
     return render(request, 'pages/index.html', context)
+
+
+def get_sub_topic(request):
+    main_topic_id = request.GET.get("main_topic_id")
+    sub_topics = QuestionSubTopic.objects.filter(main_topic=main_topic_id)
+    print(sub_topics)
+    context = {
+        "sub_topics":list(sub_topics.values_list("id","sub_topic__name")),
+    }
+    return JsonResponse(context)
+
+
+def update_target(request):
+    if request.method == "POST":
+        for obj in request.POST:
+            if obj == "csrfmiddlewaretoken":
+                continue
+            main_topic = QuestionMainTopic.objects.filter(user=request.user, main_topic__name=obj)
+            main_topic.update(target=int(request.POST[obj]))
+    
+    return redirect("main_topic")

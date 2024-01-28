@@ -191,7 +191,7 @@
         data: {
           labels: [{% for obj in progress %} '{{obj.name}}', {% endfor %} ],
           datasets: [{
-            data: [{% for obj in progress %} {{obj.complated}}, {% endfor %}],
+            data: [{% for obj in progress %} {% if obj.complated == 0 %}1 {% else %} {{obj.complated}}{% endif %}, {% endfor %}],
             backgroundColor: [{% for obj in progress %} '{{obj.color}}', {% endfor %}],
             hoverOffset: 4
           }]
@@ -209,7 +209,7 @@
     new Chart(ctx1, {
       type: "line",
       data: {
-        labels: [{% for obj in report %} '{{obj.created_date|date:"M d" }}', {% endfor %}],
+        labels: [{% for obj in report %} '{{obj.date|date:"M d" }}', {% endfor %}],
         datasets: [{
           label: "{{label_name}}",
           tension: 0.4,
