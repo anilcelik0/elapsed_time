@@ -11,7 +11,7 @@ from django.contrib.auth import authenticate, login, logout
 # Create your views here.
 
 def index(request):
-    return redirect("main_topic")
+    return redirect("qmain_topic")
 
 class UserProfileView(FormView):
     template_name = 'pages/profile.html'
@@ -51,7 +51,7 @@ class AuthSignupView(FormView):
 class AuthSigninView(FormView):
     template_name = 'pages/sign-in.html'
     form_class = LoginForm
-    success_url = reverse_lazy("main_topic")
+    success_url = reverse_lazy("qmain_topic")
 
 
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
