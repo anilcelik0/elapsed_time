@@ -219,7 +219,7 @@
           backgroundColor: gradientStroke1,
           borderWidth: 3,
           fill: true,
-          data: [{% for obj in report %} {{obj.question_count }}, {% endfor %}],
+          data: [{% for obj in report %} {% if obj.question_count %} {{obj.question_count }} {% else %} {{obj.hour}} {% endif %}, {% endfor %}],
           maxBarThickness: 6
 
         }],

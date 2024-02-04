@@ -1,5 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
+
+from apps.time_tracking.forms import TimeRecordForm
+from apps.time_tracking.models import TimeMainTopic, TimeSubTopic
 from .models import QuestionMainTopic, QuestionRecord, QuestionSubTopic
 from .forms import QuestionRecordForm
 import datetime
@@ -13,17 +16,25 @@ from django.http import JsonResponse
 @login_required()
 def index(request):
     if request.method == "POST":
-        form = QuestionRecordForm(request.POST)
+        tform = TimeRecordForm(request.POST)
+        qform = QuestionRecordForm(request.POST)
         topic_id = int(request.POST["sub_topic"])
-        topic = QuestionSubTopic.objects.get(id=topic_id)
-        if form.is_valid():
-            obj = form.save(commit=False)
+        if tform.is_valid():
+            topic = TimeSubTopic.objects.get(id=topic_id)
+            obj = tform.save(commit=False)
             obj.topic = topic
             obj.save()
-    else:
-        form = QuestionRecordForm
+        if qform.is_valid():
+            topic = QuestionSubTopic.objects.get(id=topic_id)
+            obj = qform.save(commit=False)
+            obj.topic = topic
+            obj.save()
+
+    tform = TimeRecordForm
+    qform = QuestionRecordForm
     
     progress = QuestionMainTopic.objects.filter(user=request.user)
+    tprogress = TimeMainTopic.objects.filter(user=request.user)
     report = []
     
     datas = QuestionRecord.objects.filter(topic__main_topic__user=request.user).order_by("date")
@@ -57,12 +68,12 @@ def index(request):
     # Weekly
     this_week = today + relativedelta(weekday=MO(-1))
     weekly = 0
-    weekly_objs = datas.filter(created_date__range=[this_week, today+relativedelta(weekday=MO(+1))])
+    weekly_objs = datas.filter(date__range=[this_week, today+relativedelta(weekday=MO(+1))])
     for a in weekly_objs:
         weekly += a.question_count
     
     before_week = 0
-    before_weekly_objs = datas.filter(created_date__range=[today + relativedelta(weekday=MO(-2)), today + relativedelta(weekday=MO(-1))])
+    before_weekly_objs = datas.filter(date__range=[today + relativedelta(weekday=MO(-2)), today + relativedelta(weekday=MO(-1))])
     for a in before_weekly_objs:
         before_week += a.question_count    
     
@@ -107,8 +118,11 @@ def index(request):
     
 
     context = {
-        "form": form,
+        "qform": qform,
+        "tform": tform,
         "sidebar_topic":progress,
+        "ttopics":tprogress,
+        "qtopics":progress,
         "progress":progress,
         "report":report,
         "label_name": "Tüm Dersler",
@@ -137,18 +151,27 @@ def index(request):
 @login_required
 def sub_index(request, pk):
     if request.method == "POST":
-        form = QuestionRecordForm(request.POST)
+        tform = TimeRecordForm(request.POST)
+        qform = QuestionRecordForm(request.POST)
         topic_id = int(request.POST["sub_topic"])
-        topic = QuestionSubTopic.objects.get(id=topic_id)
-        if form.is_valid():
-            obj = form.save(commit=False)
+        if tform.is_valid():
+            topic = TimeSubTopic.objects.get(id=topic_id)
+            obj = tform.save(commit=False)
             obj.topic = topic
             obj.save()
-    else:
-        form = QuestionRecordForm
+        if qform.is_valid():
+            topic = QuestionSubTopic.objects.get(id=topic_id)
+            obj = qform.save(commit=False)
+            obj.topic = topic
+            obj.save()
 
-    sidebar_topic = QuestionMainTopic.objects.filter(user=request.user)
+    tform = TimeRecordForm
+    qform = QuestionRecordForm
+
+    sidebar_topic = TimeMainTopic.objects.filter(user=request.user)
     progress = QuestionMainTopic.objects.filter(user=request.user, id=pk)
+    tprogress = TimeMainTopic.objects.filter(user=request.user)
+    qprogress = QuestionMainTopic.objects.filter(user=request.user)
     report = []
     
     datas = QuestionRecord.objects.filter(topic__main_topic__id=pk, topic__main_topic__user=request.user).order_by("date")
@@ -232,8 +255,11 @@ def sub_index(request, pk):
     
 
     context = {
-        "form":form,
+        "qform": qform,
+        "tform": tform,
         "sidebar_topic":sidebar_topic,
+        "ttopics":tprogress,
+        "qtopics":qprogress,
         "progress":progress.first().question_main.all(),
         "report":report,
         "label_name": progress.first().name,
@@ -277,4 +303,4 @@ def update_target(request):
             main_topic = QuestionMainTopic.objects.filter(user=request.user, main_topic__name=obj)
             main_topic.update(target=int(request.POST[obj]))
     
-    return redirect("main_topic")
+    return redirect("qmain_topic")
