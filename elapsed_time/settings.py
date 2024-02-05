@@ -27,7 +27,7 @@ env = environ.Env()
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if env("IS_DEVELOPMENT") == "False":
+if env("DEBUG") == "false":
     DEBUG = False
 else:
     DEBUG = True
