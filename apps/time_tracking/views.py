@@ -246,7 +246,7 @@ def sub_index(request, pk):
         total += a.complated
     
     for b in progress:
-        if b.target != 0:
+        if b.target != 0 and type(b.target) == int:
             if b.target >= b.complated:
                 total_left += (b.target-b.complated)
     
@@ -288,7 +288,6 @@ def sub_index(request, pk):
 def get_sub_topic(request):
     main_topic_id = request.GET.get("main_topic_id")
     sub_topics = TimeSubTopic.objects.filter(main_topic=main_topic_id)
-    print(sub_topics)
     context = {
         "sub_topics":list(sub_topics.values_list("id","sub_topic__name")),
     }
