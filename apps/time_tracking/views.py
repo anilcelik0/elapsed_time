@@ -297,7 +297,7 @@ def get_sub_topic(request):
 def update_target(request):
     if request.method == "POST":
         for obj in request.POST:
-            if obj == "csrfmiddlewaretoken":
+            if obj == "csrfmiddlewaretoken" or request.POST[obj] == '':
                 continue
             main_topic = TimeMainTopic.objects.filter(user=request.user, main_topic__name=obj)
             main_topic.update(target=int(request.POST[obj]))
