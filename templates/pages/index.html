@@ -193,7 +193,7 @@
         data: {
           labels: [{% for obj in progress %} '{{obj.name}}', {% endfor %} ],
           datasets: [{
-            data: [{% for obj in progress %} {% if obj.complated == 0 %}1 {% else %} {{obj.complated}}{% endif %}, {% endfor %}],
+            data: [{% for obj in progress %} {% if obj.complated == 0 %}0.1 {% else %} {{obj.complated}}{% endif %}, {% endfor %}],
             backgroundColor: [{% for obj in progress %} '{{obj.color}}', {% endfor %}],
             hoverOffset: 4
           }]
