@@ -7,6 +7,7 @@ from django.views.generic import FormView, TemplateView
 from .forms import SignUpForm, LoginForm, MyPasswordChangeForm, UserUpdateForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 
 # Create your views here.
 
@@ -46,7 +47,12 @@ class AuthSignupView(FormView):
     
     def form_valid(self, form):
         form.save()
+        messages.add_message(self.request, messages.SUCCESS, 'Kayıt başarı ile tamamlandı Giriş yapbilirsiniz')
         return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        messages.add_message(self.request, messages.WARNING, 'Bilgiler hatlı tekrar deneyin')
+        return super().form_invalid(form)
 
 class AuthSigninView(FormView):
     template_name = 'pages/sign-in.html'
