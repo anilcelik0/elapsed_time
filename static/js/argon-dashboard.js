@@ -371,7 +371,7 @@ const iconNavbarSidenav = document.getElementById('iconNavbarSidenav');
 const iconSidenav = document.getElementById('iconSidenav');
 const sidenav = document.getElementById('sidenav-main');
 let body = document.getElementsByTagName('body')[0];
-let className = 'g-sidenav-pinned';
+let className = 'g-sidenav-show';
 
 if (iconNavbarSidenav) {
   iconNavbarSidenav.addEventListener("click", toggleSidenav);
@@ -387,14 +387,16 @@ function toggleSidenav() {
     setTimeout(function() {
       sidenav.classList.remove('bg-white');
     }, 100);
-    sidenav.classList.remove('bg-transparent');
+    sidenav.classList.remove('g-sidenav-show');
 
   } else {
     body.classList.add(className);
-    sidenav.classList.remove('bg-transparent');
+    sidenav.classList.add('bg-dark');
+    sidenav.classList.remove('g-sidenav-show');
     iconSidenav.classList.remove('d-none');
   }
 }
+
 
 let html = document.getElementsByTagName('html')[0];
 
